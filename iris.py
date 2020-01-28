@@ -12,3 +12,29 @@ import pandas as pd
 from matplotlib import pyplot as plt
 import numpy as np
 
+original_dataset = pd.read_csv('https://raw.githubusercontent.com/uzairzia/iris/master/dataset/bezdekIris.data', header=None)
+dataset = original_dataset.copy(deep=True)
+
+dataset.describe()
+
+dataset_histogram = dataset.hist(figsize=(10,10))
+
+# Compute correlation of columns with each other
+dataset.corr()
+
+# Reorder the dataset randomly
+dataset = dataset.reindex(np.random.permutation(dataset.index))
+
+# Use first 70% of the dataset for training
+train_dataset = dataset.head(int(len(dataset) * 0.7))
+
+# Use last 30% of the dataset for testing
+test_dataset = dataset.tail(int(np.ceil(len(dataset) * 0.3)))
+
+train_dataset_histogram = train_dataset.hist(figsize=(10,10))
+
+test_dataset_histogram = test_dataset.hist(figsize=(10,10))
+
+train_dataset.describe()
+
+test_dataset.describe()
