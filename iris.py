@@ -128,3 +128,19 @@ prediction_input_fn = lambda: input_data(test_dataset_features, test_dataset_lab
 # Predict on test dataset
 predictions = linear_classifier.predict(input_fn=prediction_input_fn)
 predictions = np.array([record['class_ids'][0] for record in predictions])
+
+# Metrics for evaluating classifier
+evaluation_metrics = linear_classifier.evaluate(input_fn=prediction_input_fn)
+mean_squared_error = metrics.mean_squared_error(test_dataset_labels, predictions)
+root_mean_squared_error = math.sqrt(mean_squared_error)
+
+print("\nMean squared error: {}".format(mean_squared_error))
+print("Root mean squared error: {}".format(root_mean_squared_error))
+print("Accuracy: {}".format(evaluation_metrics['accuracy']))
+
+# Reverse map labels used for classifier to original labels (eg. 0 -> Iris-setosa)
+predictions_mapped = pd.Series(predictions).map({0:'Iris-setosa', 1:'Iris-versicolor', 2:'Iris-virginica'})
+
+print("-Actual Labels- \t\t -Predicted Labels-\n")
+for i in range(len(predictions_mapped)):
+    print(test_dataset.iloc[i,4] + "\t\t" + predictions_mapped.iloc[i])
