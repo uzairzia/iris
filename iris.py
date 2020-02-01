@@ -121,3 +121,10 @@ training_input_fn = lambda: input_data(train_dataset_features, train_dataset_lab
 _ = linear_classifier.train(
     input_fn = training_input_fn,
     steps=1000)
+
+# Input function for predicting on test dataset
+prediction_input_fn = lambda: input_data(test_dataset_features, test_dataset_labels, epochs=1, shuffle=False)
+
+# Predict on test dataset
+predictions = linear_classifier.predict(input_fn=prediction_input_fn)
+predictions = np.array([record['class_ids'][0] for record in predictions])
