@@ -11,6 +11,10 @@ import tensorflow as tf
 import pandas as pd
 from matplotlib import pyplot as plt
 import numpy as np
+from sklearn import metrics
+import math
+
+tf.logging.set_verbosity(tf.logging.ERROR)
 
 original_dataset = pd.read_csv('https://raw.githubusercontent.com/uzairzia/iris/master/dataset/bezdekIris.data', header=None)
 dataset = original_dataset.copy(deep=True)
@@ -55,3 +59,26 @@ plt.xlabel('feature 0 - sepal length')
 plt.ylabel('feature 1 - sepal width')
 plt.legend()
 plt.show()
+
+# Extract features from dataset (first four columns) and preprocess them
+def get_features(passed_dataframe):
+    features = passed_dataframe.iloc[:,:4]
+
+    # Convert features into a dictionary of numpy arrays
+    # Each key:value pair represents a single feature of all examples
+    features = {str(key):np.array(value) for key,value in dict(features).items()}
+    
+    return features
+
+# Extract labels from dataset (last column) and preprocess them
+def get_labels(passed_dataframe):
+    string_labels = passed_dataframe.iloc[:,4]
+
+    # Convert string labels to discrete numerical values
+    numerical_labels = pd.Series(pd.Categorical(string_labels).codes, name=string_labels.name, dtype=np.int64)
+
+    return numerical_labels
+
+# Our feature columns are numeric values
+def get_feature_columns(passed_dataframe):
+    return set([tf.feature_column.numeric_column(str(column_name)) for column_name in passed_dataframe])
