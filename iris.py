@@ -82,3 +82,35 @@ def get_labels(passed_dataframe):
 # Our feature columns are numeric values
 def get_feature_columns(passed_dataframe):
     return set([tf.feature_column.numeric_column(str(column_name)) for column_name in passed_dataframe])
+
+# Input function creates and returns successive batches of dataset
+def input_data(features, labels, batch_size=1, epochs=None, shuffle=True):
+    # Construct dataset from given features and labels
+    dataset = tf.data.Dataset.from_tensor_slices((features, labels))
+
+    # Configure batch size and epochs
+    dataset = dataset.batch(batch_size, drop_remainder=True).repeat(epochs)
+
+    if shuffle:
+        dataset = dataset.shuffle(buffer_size=105)
+
+    features, labels = dataset.make_one_shot_iterator().get_next()
+    return features, labels
+
+# Prepare features and labels for training
+train_dataset_features = get_features(train_dataset)
+train_dataset_labels = get_labels(train_dataset)
+
+# Prepare features and labels for testing
+test_dataset_features = get_features(test_dataset)
+test_dataset_labels = get_labels(test_dataset)
+
+# Define Optimizer
+optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.01)
+
+# Set up linear classifier
+linear_classifier = tf.estimator.LinearClassifier(
+    feature_columns=get_feature_columns(train_dataset_features), 
+    n_classes=3, 
+    optimizer=optimizer)
+
