@@ -114,3 +114,10 @@ linear_classifier = tf.estimator.LinearClassifier(
     n_classes=3, 
     optimizer=optimizer)
 
+# Input function for training on train dataset
+training_input_fn = lambda: input_data(train_dataset_features, train_dataset_labels, batch_size=15, shuffle=True)
+
+# Train classifier on the training data
+_ = linear_classifier.train(
+    input_fn = training_input_fn,
+    steps=1000)
